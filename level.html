@@ -1,0 +1,29 @@
+    <div class='level'  
+      ng-repeat-start="level in models.levels" 
+      ng-controller="LevelController" 
+      dnd-list="models.devices">
+      <div class='device' 
+        ng-repeat="device in models.devices"
+        dnd-draggable="device"
+        dnd-moved="models.devices.splice($index, 1)"
+        dnd-effect-allowed="move"
+        ng-init="deviceCtrl.setDevice(device)"
+        ng-controller="DeviceController as deviceCtrl"
+        style="height:{{height()}}px;">
+        <div class="device-text">
+          <i class="fa fa-{{device.icon}}"></i>
+          {{device.label}}
+        </div>
+      </div>
+      <div class='add-device' ng-click="add_device()">
+        <i class="fa fa-plus-square"></i><br/>
+        <span>Add Device</span>
+      </div>
+    </div>
+    <div ng-repeat-end="" class='bay'>
+      <i class="fa fa-cogs"></i>
+    </div>
+    <div class='add-level' ng-click="add_level()">
+      <i class='fa fa-plus-square'></i><br/>
+      <span>Add Level</span>
+    </div>

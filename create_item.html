@@ -1,0 +1,11 @@
+<div class="ngdialog-content device-type-dialog">
+  <div class="ngdialog-message">
+  <h2>Select device type</h2>
+  
+  <div class='device' 
+    ng-repeat="(device_name, device_type) in models.DeviceTypes"
+    ng-click='closeThisDialog(device_name)'>
+    <i class="fa fa-{{device_type.icon}}"></i>{{device_type.label}}</div>
+  </div>
+  
+</div> 

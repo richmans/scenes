@@ -1,0 +1,130 @@
+@font-face {
+  font-family: Stellar;
+  src: url(../fonts/Stellar-Regular.otf);
+}
+html, body {
+  font-family: Stellar;
+  background-color:black;
+}
+
+div.scene-container {
+  color: #CCF;
+  border: 1px solid #222255;
+  border-radius:5px;
+  width: 100% - 40px;
+  min-height:200px;
+  margin:20px;
+  overflow-x:scroll;
+}
+
+div.scene-container div.scene {
+  display: table;
+  border-spacing: 15px;
+  border-collapse: separate;
+}
+
+div.scene-container div.level {
+  display:table-cell;
+  border: 2px solid #222255;
+  margin:10px;
+  background-color: #222222;
+  width:200px;
+  min-width:200px;
+  height:200px;
+  vertical-align:top;
+}
+
+div.scene-container div.bay { 
+  display: table-cell;
+  border: 2px solid #222255;
+  margin:10px;
+  vertical-align:middle;
+  width:50px;
+  min-width:50px;
+  text-align:center;
+  font-size:20pt ;
+}
+
+div.scene-container div.level .dndPlaceholder {
+    display: block;
+    background-color: #777;
+    margin-bottom:10px;
+    min-height: 42px;
+    border-radius:4px;
+}
+
+div.scene-container div.device {
+  padding:10px;
+  margin-bottom:10px;
+  background-color: #18F;
+  font-size:14pt;
+  border-radius:5px;
+}
+
+div.scene-container div.device div.device-text {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+div.scene-container div.device i {
+  margin-right: 10px;
+}
+div.scene-container div.add-device {
+  border: 2px dashed #18F;
+  color:#18F;
+  text-align: center;
+  padding:15px;
+}
+
+div.scene-container div.add-device i {
+  font-size: 30pt;
+}
+
+div.scene-container div.add-device:hover {
+  background-color: #18F;
+  color:white;
+  cursor:pointer;
+}
+
+div.scene-container div.add-level {
+  border: 2px dashed #18F;
+  color:#18F;
+  
+  padding:15px;
+  width:170px;
+  min-width:170px;
+  margin:10px;
+  text-align: center;
+  vertical-align: middle;
+  width: 170px;
+  display: table-cell;
+}
+
+div.scene-container div.add-level i {
+  font-size:30pt;
+}
+
+div.scene-container div.add-level:hover {
+  background-color: #18F;
+  color:white;
+  cursor:pointer;
+}
+
+
+div.device-type-dialog  div.device{
+  font-size: 15pt;
+  padding:20px;
+  border: 1px solid #888;
+  cursor: pointer;
+  margin-bottom:10px;
+}
+
+div.device-type-dialog  div.device:hover {
+  background-color: #18F;
+  color:white;
+}
+
+div.device-type-dialog  div.device i {
+  margin-right:10px;
+}
