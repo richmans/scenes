@@ -45,6 +45,12 @@ div.scene-container div.bay {
   font-size:20pt ;
 }
 
+div.scene-container div.bay:hover {
+  background-color: #18F;
+  color:white;
+  cursor:pointer;
+} 
+
 div.scene-container div.level .dndPlaceholder {
     display: block;
     background-color: #777;

@@ -31,7 +31,7 @@ angular.module("showmaster", ["dndLists", "ngDialog"])
     levels: []
   };
   $scope.models.levels.push({label: "level1"})
-  $scope.add_level = function() {
+  this.add_level = function() {
     $scope.models.levels.push({}); 
   }
 })
@@ -42,7 +42,10 @@ angular.module("showmaster", ["dndLists", "ngDialog"])
     devices: [],
     DeviceTypes: DeviceTypes
   };
-  $scope.add_device = function() {
+  
+  this.setId = function(id) {this.id = id}
+  
+  this.add_device = function() {
     dialog = ngDialog.open({template: "create_item.html", className: 'ngdialog-theme-default', scope: $scope})
     dialog.closePromise.then(function (data) {
       $scope.models.devices.push(copy(DeviceTypes[data.value]));
@@ -54,7 +57,14 @@ angular.module("showmaster", ["dndLists", "ngDialog"])
   this.setDevice = function(device){
       this.device = device;
   }
-  $scope.height = function() {
+  this.height = function() {
     return Math.max(this.device.inputs.length, this.device.outputs.length) * 45;
+  }
+})
+
+.controller("BayController", function($scope) {
+  this.setId = function(id) { this.id = id; }
+  this.openBay = function() {
+    alert("HELLO " + this.id);
   }
 })
