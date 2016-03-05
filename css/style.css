@@ -134,3 +134,29 @@ div.device-type-dialog  div.device:hover {
 div.device-type-dialog  div.device i {
   margin-right:10px;
 }
+
+div.device div.port {
+  border: 1px solid white;
+  color:#18F;
+  background-color:white;
+}
+
+div.device div.port.output {
+  display:none;
+}
+
+div.level.output-open div.device div.port.output {
+  float: right;
+  border-bottom-right-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 5px;
+  width: 100px;
+  display:block;
+  
+}
+
+div.level.output-open div.device{
+  width: 250px;
+  padding-right:0;
+}
+

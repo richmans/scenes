@@ -43,13 +43,37 @@ angular.module("showmaster", ["dndLists", "ngDialog"])
     DeviceTypes: DeviceTypes
   };
   
-  this.setId = function(id) {this.id = id}
+  this.setId = function(levelId) {
+    this.levelId = levelId;
+    $scope.$parent.$parent.$on("open-" + this.levelId, this.openOutput.bind(this))
+    $scope.$parent.$parent.$on("close-" + this.levelId, this.closePorts.bind(this))
+   
+    if (levelId > 0) {
+      $scope.$parent.$parent.$on("open-" + (this.levelId - 1), this.openInput.bind(this))
+      $scope.$parent.$parent.$on("close-" + (this.levelId - 1), this.closePorts.bind(this))
+    }
+  }
   
   this.add_device = function() {
     dialog = ngDialog.open({template: "create_item.html", className: 'ngdialog-theme-default', scope: $scope})
     dialog.closePromise.then(function (data) {
       $scope.models.devices.push(copy(DeviceTypes[data.value]));
     });
+  }
+  
+  this.openInput = function() {
+    console.log(this.levelId + " open input");
+    this.portOpen = "input-open";
+  }
+  
+  this.openOutput = function() {
+    console.log(this.levelId + " open output");
+    this.portOpen = "output-open";
+  }
+  
+  this.closePorts = function() {
+    console.log(this.levelId + " close");
+    this.portOpen = "";
   }
 })
 
@@ -63,8 +87,28 @@ angular.module("showmaster", ["dndLists", "ngDialog"])
 })
 
 .controller("BayController", function($scope) {
-  this.setId = function(id) { this.id = id; }
+  this.isOpen = false;
+  this.setId = function(bayId) { this.bayId = bayId; }
+  
+  
   this.openBay = function() {
-    alert("HELLO " + this.id);
+    $scope.$parent.$parent.$emit("close-all");
+    $scope.$parent.$parent.$emit("open-" + this.bayId);
+    this.isOpen = true;
   }
+  this.closeBay = function() {
+    if (this.isOpen == false) return;
+    $scope.$parent.$parent.$emit("close-" + this.bayId);
+    this.isOpen = false;
+  }
+  this.toggleBay = function() {
+    if (this.isOpen) {
+      this.closeBay();
+    }else{
+      this.openBay();
+    }
+  }
+  
+  $scope.$parent.$parent.$on("close-all", this.closeBay.bind(this))
+  
 })

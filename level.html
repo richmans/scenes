@@ -1,4 +1,4 @@
-    <div class='level'  
+    <div class='level {{levelCtrl.portOpen}}'  
       ng-repeat-start="level in models.levels" 
       ng-init="levelCtrl.setId($index)"
       ng-controller="LevelController as levelCtrl" 
@@ -15,6 +15,11 @@
           <i class="fa fa-{{device.icon}}"></i>
           <span ng-bind="device.label"></span>
         </div>
+        <div class="output-ports">
+          <div class="output port">
+            output
+          </div>
+        </div>
       </div>
       <div class='add-device' ng-click="levelCtrl.add_device()">
         <i class="fa fa-plus-square"></i><br/>
@@ -24,7 +29,7 @@
     <div ng-repeat-end="" 
       class='bay' 
       ng-controller="BayController as bayCtrl" 
-      ng-click="bayCtrl.openBay()"
+      ng-click="bayCtrl.toggleBay()"
       ng-init="bayCtrl.setId($index)">
       <i class="fa fa-cogs"></i>
     </div>
