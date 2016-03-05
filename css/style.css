@@ -141,18 +141,45 @@ div.device div.port {
   background-color:white;
 }
 
-div.device div.port.output {
+div.device div.port {
   display:none;
 }
 
-div.level.output-open div.device div.port.output {
+div.level div.device div.output-ports {
   float: right;
+}
+div.level.output-open div.device div.port.output {
   border-bottom-right-radius: 20px;
   border-top-right-radius: 20px;
   padding: 5px;
   width: 100px;
   display:block;
-  
+  transform: translateX(20px);
+  margin-bottom:5px;
+}
+
+div.level div.device div.input-ports {
+  float: left;
+}
+
+div.level.input-open div.device div.port.input {
+  border-bottom-left-radius: 20px;
+  border-top-left-radius: 20px;
+  padding: 5px;
+  width: 100px;
+  display:block;
+  transform: translateX(-20px);
+  text-align:right;
+  margin-bottom:5px;
+}
+
+div.level.input-open div.device div.device-text {
+  margin-left:130px;
+}
+
+div.level.input-open div.device {
+  padding-left:0;
+  width: 270px;
 }
 
 div.level.output-open div.device{

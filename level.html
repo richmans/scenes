@@ -11,15 +11,21 @@
         ng-init="deviceCtrl.setDevice(device)"
         ng-controller="DeviceController as deviceCtrl"
         style="height:{{deviceCtrl.height()}}px;">
+        <div class="output-ports">
+          <div class="output port" ng-repeat="port in device.outputs">
+            {{port}}
+          </div>
+        </div>
+        <div class="input-ports">
+          <div class="input port" ng-repeat="port in device.inputs">
+            {{port}}
+          </div>
+        </div>
         <div class="device-text">
           <i class="fa fa-{{device.icon}}"></i>
           <span ng-bind="device.label"></span>
         </div>
-        <div class="output-ports">
-          <div class="output port">
-            output
-          </div>
-        </div>
+       
       </div>
       <div class='add-device' ng-click="levelCtrl.add_device()">
         <i class="fa fa-plus-square"></i><br/>

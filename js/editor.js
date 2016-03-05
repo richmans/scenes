@@ -15,7 +15,7 @@ angular.module("showmaster", ["dndLists", "ngDialog"])
     label: "Looper",
     icon: "refresh",
     inputs: ["ticks"],
-    outputs: ["1", "2", "3"]
+    outputs: ["1", "2", "3", "4", "5", "6", "7", "8"]
   },
   dimmer: {
     label: "Dimmer",
@@ -82,7 +82,7 @@ angular.module("showmaster", ["dndLists", "ngDialog"])
       this.device = device;
   }
   this.height = function() {
-    return Math.max(this.device.inputs.length, this.device.outputs.length) * 45;
+    return Math.max(this.device.inputs.length, this.device.outputs.length) * 44 + 20;
   }
 })
 
