@@ -26,80 +26,205 @@ angular.module("showmaster", ["dndLists", "ngDialog"])
   
 })
 
-.controller("SceneController", function($scope, ngDialog) {
-  $scope.models = {
-    levels: []
+.factory("Scene", function(DeviceTypes) {
+  var maxDevice = 0;
+  
+  var Device = function(type) {
+    newDevice = copy(DeviceTypes[type])
+    newDevice.height = Math.max(newDevice.inputs.length, newDevice.outputs.length) * 44 + 20;
+    newDevice.id = maxDevice;
+    maxDevice += 1;
+    return newDevice;
+  }
+  
+  var Level = function(id) {
+    return {
+      devices: [],
+      id: id,
+      addDevice: function(type) {
+        this.devices.push(Device(type));
+      },
+      connections: [],
+      getInputTop: function(deviceId, inputPort) {
+        console.log("Getting input port top for " + deviceId + "," + inputPort);
+        deviceOffset = 0;
+        inputDevice = null;
+        for(deviceIndex in this.devices) {
+          device = this.devices[deviceIndex];
+          if(device.id == deviceId) {
+            inputDevice = device;
+            break;
+          }else {
+            deviceOffset += device.height;
+          }
+        }
+        if (inputDevice == null) {
+          console.log("Can't find input device " + deviceId + " in level " + this.id);
+        }
+        portIndex = inputDevice.inputs.indexOf(inputPort);
+        return deviceOffset + portIndex * 44 + 32;
+      },
+      getOutputTop: function(deviceId, outputPort) {
+        deviceOffset = 0;
+        outputDevice = null;
+        for(deviceIndex in this.devices) {
+          device = this.devices[deviceIndex];
+          if(device.id == deviceId) {
+            outputDevice = device;
+            break;
+          }else {
+            deviceOffset += device.height;
+          }
+        }
+        if (outputDevice == null) {
+          console.log("Can't find output device " + deviceId + " in level " + this.id);
+        }
+        portIndex = outputDevice.outputs.indexOf(outputPort)
+        if (portIndex == -1) {
+          console.log("Can't find output port " + outputPort + " on device " + deviceId + " in level " + this.id);
+        }
+        return deviceOffset + portIndex * 44 + 32;
+      }
+    }
+  }
+  
+  var Scene = {
+    levels:[],
+    maxLevel: 0,
+    addLevel: function() {
+      console.log("Adding level");
+      this.levels.push(Level(this.maxLevel));
+      this.maxLevel += 1;
+    }
   };
-  $scope.models.levels.push({label: "level1"})
-  this.add_level = function() {
-    $scope.models.levels.push({}); 
+  return Scene;
+})
+
+.controller("SceneController", function($scope, Scene, ngDialog) {
+  $scope.scene = Scene
+  this.addLevel = function() {
+    Scene.addLevel();
+  }
+})
+
+.controller("RawSceneController", function($scope, Scene) {
+  this.scene = Scene;
+  this.sceneJSON= function() {
+    return JSON.stringify(this.scene,null, 2);
   }
 })
 
 
-.controller("LevelController", function($scope, ngDialog, DeviceTypes) {
+.controller("LevelController", function($scope, Scene, ngDialog, DeviceTypes) {
+  this.devices = [];
+  this.level = {};
   $scope.models = {
-    devices: [],
     DeviceTypes: DeviceTypes
   };
+
   
-  this.setId = function(levelId) {
-    this.levelId = levelId;
-    $scope.$parent.$parent.$on("open-" + this.levelId, this.openOutput.bind(this))
-    $scope.$parent.$parent.$on("close-" + this.levelId, this.closePorts.bind(this))
+  this.setLevel = function(level) {
+    this.level = level;
+    this.devices = level.devices
+    $scope.$on("select-port", this.selectPort.bind(this));
+    $scope.$parent.$parent.$on("connect-" + level.id, this.connect.bind(this));
+    $scope.$parent.$parent.$on("open-" + level.id, this.openOutput.bind(this))
+    $scope.$parent.$parent.$on("close-" + level.id, this.closePorts.bind(this))
    
-    if (levelId > 0) {
-      $scope.$parent.$parent.$on("open-" + (this.levelId - 1), this.openInput.bind(this))
-      $scope.$parent.$parent.$on("close-" + (this.levelId - 1), this.closePorts.bind(this))
+    if (level.id > 0) {
+      $scope.$parent.$parent.$on("open-" + (level.id - 1), this.openInput.bind(this))
+      $scope.$parent.$parent.$on("close-" + (level.id - 1), this.closePorts.bind(this))
     }
   }
   
-  this.add_device = function() {
+  this.addDevice = function() {
     dialog = ngDialog.open({template: "create_item.html", className: 'ngdialog-theme-default', scope: $scope})
     dialog.closePromise.then(function (data) {
-      $scope.models.devices.push(copy(DeviceTypes[data.value]));
-    });
+      this.level.addDevice(data.value);
+      $scope.$parent.$parent.$emit("draw");
+    }.bind(this));
   }
   
   this.openInput = function() {
-    console.log(this.levelId + " open input");
+    console.log(this.level.id + " open input");
     this.portOpen = "input-open";
   }
   
   this.openOutput = function() {
-    console.log(this.levelId + " open output");
+    console.log(this.level.id + " open output");
     this.portOpen = "output-open";
   }
   
   this.closePorts = function() {
-    console.log(this.levelId + " close");
+    console.log(this.level.id + " close");
+    $scope.$emit("select-port")
     this.portOpen = "";
+  }
+  
+  this.connectInput = function(device, port) {
+    $scope.$parent.$parent.$emit("connect-" + (this.level.id -1), device.id, port);
+  }
+  
+  this.selectPort = function(event, device, port) {
+    this.selectedDevice = device;
+    this.selectedPort = port;
+  }
+  
+  this.connect = function(event, device_id, port) {
+    this.level.connections.push({outputDevice: this.selectedDevice, outputPort: this.selectedPort, inputDevice:device_id, inputPort:port});
+    $scope.$parent.$parent.$emit("draw");
+    $scope.$emit("select-port");
   }
 })
 
 .controller("DeviceController", function($scope) {
   this.setDevice = function(device){
+      $scope.$parent.$parent.$emit("draw");
       this.device = device;
+      this.height = device.height;
   }
   this.height = function() {
-    return Math.max(this.device.inputs.length, this.device.outputs.length) * 44 + 20;
+    return {"height" : this.device.height + "px"};
   }
+  
+  console.log($scope.$element);
+ // new WireIt.Terminal($scope.$element);
 })
 
-.controller("BayController", function($scope) {
-  this.isOpen = false;
-  this.setId = function(bayId) { this.bayId = bayId; }
+.controller("OutputPortController", function($scope) {
+  this.selected = false;
+  this.select = function() {
+    $scope.$parent.$parent.$parent.$parent.$emit("select-port", $scope.device.id, $scope.port);
+    this.selected = true;
+  };
   
+  this.deselect = function() {
+    this.selected = false;
+  }
+  $scope.$parent.$parent.$parent.$parent.$on("select-port", this.deselect.bind(this))
+})
+
+.controller("BayController", function($scope, $element, Scene) {
+  this.isOpen = false;
+  this.isClosed = true;
+  this.Scene = Scene;
+  this.canvas = $element.find("canvas")[0];
+  this.setId = function(bayId) { 
+    this.bayId = bayId; 
+  }
   
   this.openBay = function() {
     $scope.$parent.$parent.$emit("close-all");
     $scope.$parent.$parent.$emit("open-" + this.bayId);
     this.isOpen = true;
+    this.isClosed = false;
+    this.draw();
   }
   this.closeBay = function() {
     if (this.isOpen == false) return;
     $scope.$parent.$parent.$emit("close-" + this.bayId);
     this.isOpen = false;
+    this.isClosed= true
   }
   this.toggleBay = function() {
     if (this.isOpen) {
@@ -109,6 +234,42 @@ angular.module("showmaster", ["dndLists", "ngDialog"])
     }
   }
   
-  $scope.$parent.$parent.$on("close-all", this.closeBay.bind(this))
+  this.draw = function() {
+    this.canvas.height = parseInt($element.css("height"));
+    this.outputLevel = this.Scene.levels[this.bayId];
+    this.inputLevel = this.Scene.levels[this.bayId + 1];
+    console.log("Drawing")
+    console.log(this.outputLevel);
+    for (index in this.outputLevel.connections) {
+      console.log(index);
+      connection = this.outputLevel.connections[index];
+      console.log(connection);
+      this.drawConnection(connection);
+    }
+  }
   
+  this.drawConnection = function(connection) {
+    console.log("Drawing connection " + connection);
+    console.log(connection);
+    inputHeight = this.inputLevel.getInputTop(connection.inputDevice, connection.inputPort)
+    console.log("Input height" + inputHeight);
+    outputHeight = this.outputLevel.getOutputTop(connection.outputDevice, connection.outputPort)
+    console.log("Output height" + outputHeight);
+    this.drawLine(inputHeight, outputHeight)
+  }
+  
+  this.drawLine = function(inputHeight, outputHeight) {
+    var ctx = this.canvas.getContext("2d");
+    maxWidth = this.canvas.width;
+    ctx.beginPath();
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.moveTo(0,outputHeight);
+    ctx.lineTo(maxWidth, inputHeight);
+    ctx.strokeStyle = '#18F';
+    ctx.stroke();
+  }
+  
+  $scope.$parent.$parent.$on("close-all", this.closeBay.bind(this))
+  $scope.$parent.$parent.$on("draw", this.draw.bind(this))
 })

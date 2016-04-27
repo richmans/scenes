@@ -1,23 +1,27 @@
     <div class='level {{levelCtrl.portOpen}}'  
-      ng-repeat-start="level in models.levels" 
-      ng-init="levelCtrl.setId($index)"
+      ng-repeat-start="level in scene.levels" 
+      ng-init="levelCtrl.setLevel(level)"
       ng-controller="LevelController as levelCtrl" 
-      dnd-list="models.devices">
+      dnd-list="levelCtrl.devices">
       <div class='device' 
-        ng-repeat="device in models.devices"
+        ng-repeat="device in levelCtrl.devices"
         dnd-draggable="device"
-        dnd-moved="models.devices.splice($index, 1)"
+        dnd-moved="levelCtrl.devices.splice($index, 1)"
         dnd-effect-allowed="move"
         ng-init="deviceCtrl.setDevice(device)"
         ng-controller="DeviceController as deviceCtrl"
-        style="height:{{deviceCtrl.height()}}px;">
+        style="height: {{deviceCtrl.height}}px">
         <div class="output-ports">
-          <div class="output port" ng-repeat="port in device.outputs">
+          <div class="output port" 
+            ng-controller="OutputPortController as outputCtrl" 
+            ng-repeat="port in device.outputs"
+            ng-class="{selected: outputCtrl.selected}"
+            ng-click="outputCtrl.select()">
             {{port}}
           </div>
         </div>
         <div class="input-ports">
-          <div class="input port" ng-repeat="port in device.inputs">
+          <div class="input port" ng-click='levelCtrl.connectInput(device, port)' ng-repeat="port in device.inputs">
             {{port}}
           </div>
         </div>
@@ -27,19 +31,22 @@
         </div>
        
       </div>
-      <div class='add-device' ng-click="levelCtrl.add_device()">
+      <div class='add-device' ng-click="levelCtrl.addDevice()">
         <i class="fa fa-plus-square"></i><br/>
         <span>Add Device</span>
       </div>
     </div>
     <div ng-repeat-end="" 
       class='bay' 
+      ng-class="{open: bayCtrl.isOpen, closed: bayCtrl.isClosed}"
       ng-controller="BayController as bayCtrl" 
       ng-click="bayCtrl.toggleBay()"
       ng-init="bayCtrl.setId($index)">
-      <i class="fa fa-cogs"></i>
+      <i class="fa fa-cogs" ng-show="bayCtrl.isClosed"></i>
+      <canvas ng-show="bayCtrl.isOpen">
+      </canvas>
     </div>
-    <div class='add-level' ng-click="sceneCtrl.add_level()">
+    <div class='add-level' ng-click="sceneCtrl.addLevel()">
       <i class='fa fa-plus-square'></i><br/>
       <span>Add Level</span>
     </div>

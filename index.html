@@ -7,12 +7,11 @@
  <link rel="stylesheet" type="text/css" href="css/ngDialog-theme-default.min.css">
  <link rel="stylesheet" type="text/css" href="css/ngDialog-theme-plain.min.css">
  <link rel="stylesheet" type="text/css" href="css/style.css">
- 
+ <script type='text/javascript' src="js/jquery.min.js"></script> 
  <script type='text/javascript' src="js/angular.min.js"></script>
  <script type='text/javascript' src="js/angular-drag-and-drop-lists.min.js"></script>
  <script type='text/javascript' src="js/angular-route.min.js"></script>
  <script type='text/javascript' src="js/ngDialog.min.js"></script>
- <script type='text/javascript' src="js/editor.js"></script>
 
 </head>
 <body  ng-app="showmaster">
@@ -21,6 +20,9 @@
   <div class='scene' ng-include="'level.html'">
    
   </div>
+</div>
+<div class='raw-container' ng-controller="RawSceneController as sceneCtrl">
+  {{sceneCtrl.sceneJSON()}}
 </div>
 <script type='text/javascript' src="js/editor.js"></script>  
 </body>
