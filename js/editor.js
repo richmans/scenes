@@ -55,7 +55,7 @@ angular.module("showmaster", ["dndLists", "ngDialog"])
             inputDevice = device;
             break;
           }else {
-            deviceOffset += device.height;
+            deviceOffset += device.height + 10;
           }
         }
         if (inputDevice == null) {
@@ -73,7 +73,7 @@ angular.module("showmaster", ["dndLists", "ngDialog"])
             outputDevice = device;
             break;
           }else {
-            deviceOffset += device.height;
+            deviceOffset += device.height + 10;
           }
         }
         if (outputDevice == null) {
